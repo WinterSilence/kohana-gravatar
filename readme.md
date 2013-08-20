@@ -1,10 +1,11 @@
 ### A globally recognized avatar aka Gravatar helper class for Kohana framework 3.3
-Gravatar - a picture that follows you from site to site, appearing when you send a comment or write a blog. `http://gravatar.com/`
+Gravatar - a picture that follows you from site to site, 
+appearing when you send a comment or write a blog. `http://gravatar.com/`
 
 ### Usage:
 Create image tag with gravatar:
 <pre>
-echo Gravatar::factory('user@site.com', 'config_group_name')->render('add_this_class_to_img', $secure);
+echo Gravatar::factory('me@site.com', 'cfg_group')->render('img_class_attr', $secure);
 // Short version
 echo Gravatar::factory('user@site.com', 'big');
 // Configurate in code
