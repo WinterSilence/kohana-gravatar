@@ -7,7 +7,7 @@
  * @author    WinterSilence
  * @copyright (c) 2013 handy-soft.ru
  * @license   MIT License
- * @link      https://github.com/wintersilence/kohana-gravatar
+ * @link      https://github.com/WinterSilence/kohana-gravatar
  *
  *   echo Gravatar::factory('test@site.com', 'big')->render();
  *  
@@ -22,12 +22,12 @@
  *   echo $avatar->url(TRUE);
  *   echo $avatar->size();
  *  
- *   https://gravatar.com/site/implement/images/
- *   https://ru.gravatar.com/site/implement/profiles/
+ * @see http://gravatar.com/site/implement/images/
+ * @see http://ru.gravatar.com/site/implement/profiles/
 */
 abstract class Model_Gravatar extends Model
 {
-	// 
+	// Image URL pattern
 	const URL = 'http%s://www.gravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s';
 
 	// Do not load any image if none is associated with the email hash
@@ -54,11 +54,11 @@ abstract class Model_Gravatar extends Model
 	// May contain hardcore sexual imagery or extremely disturbing violence.
 	const RATING_X  = 'x';
 
-	// 
+	// Default config group
 	public static $default = 'default';
-	// 
+	// User email address
 	protected $_email;
-	// 
+	// Image size
 	protected $_size = 80;
 	// 
 	protected $_default_image = self::IMAGE_404;
@@ -68,7 +68,7 @@ abstract class Model_Gravatar extends Model
 	protected $_rating = self::RATING_G;
 
 	/**
-	 * config - config group or config array
+	 * Gravatar factory
 	 */
 	public static function factory($email = NULL, $group = NULL)
 	{
@@ -100,7 +100,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Create utl
 	 */
 	public function url($secure = FALSE)
 	{
@@ -111,7 +111,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Create image tag
 	 */
 	public function render($class = NULL, $secure = FALSE)
 	{
@@ -131,7 +131,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Sets or gets email
 	 */
 	public function email($value = NULL)
 	{
@@ -149,7 +149,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Sets or gets image size
 	 */
 	public function size($value = NULL)
 	{
@@ -167,7 +167,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Sets or gets default image
 	 */
 	public function default_image($value = NULL)
 	{
@@ -188,7 +188,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Sets or gets force default image
 	 */
 	public function force_default($value = NULL)
 	{
@@ -202,7 +202,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Sets or gets image rating
 	 */
 	public function rating($value = NULL)
 	{
@@ -220,11 +220,27 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * toString
+	 * Convert to string
 	 */
 	public function __toString()
 	{
 		return $this->render();
+	}
+
+	/**
+	 * Magic getter
+	 */
+	public function __get($name)
+	{
+		return $this->{'_'.$name};
+	}
+
+	/**
+	 * Magic setter
+	 */
+	public function __set($name, $value)
+	{
+		return $this->{$name}($value);
 	}
 
 } // End Gravatar
