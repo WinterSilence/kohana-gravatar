@@ -2,57 +2,60 @@
 /**
  * A globally recognized avatar aka Gravatar helper class
  *
- * @package   Kohana/Gravatar
- * @category  Helpers
- * @author    WinterSilence
+ * @package   Gravatar
+ * @category  Model
+ * @author    WinterSilence <info@handy-soft.ru>
  * @copyright (c) 2013 handy-soft.ru
  * @license   MIT License
  * @link      https://github.com/WinterSilence/kohana-gravatar
  *
+ * Usage examples:
+ *   // Get gravatar image tag (short way)
  *   echo Gravatar::factory('test@site.com', 'big')->render();
  *  
- *   $avatar = Gravatar::factory();
- *   echo $avatar->email('test@site.com')
- *   			->size(80)
- *   			->default_image(Gravatar::IMAGE_MM)
- *   			->force_default(FALSE)
- *   			->rating(Gravatar::RATING_PG)
- *   			->render('avatar_class', FALSE);
+ *   // Get gravatar image tag (full way)
+ *   $gravatar = Gravatar::factory();
+ *   echo $gravatar->email('test@site.com')
+ *   	->size(80)
+ *   	->default_image(Gravatar::IMAGE_MM)
+ *   	->force_default(FALSE)
+ *   	->rating(Gravatar::RATING_PG)
+ *   	->render('avatar_class', FALSE);
+ *   
+ *   // Get profile data
+ *   var_export($gravatar->profile_data(array('photos', 'accounts')));
+ *   // Get gravatar URL
+ *   echo $gravatar->url(TRUE);
+ *   // Get size property value
+ *   echo $gravatar->size();
  *  
- *   echo $avatar->url(TRUE);
- *   echo $avatar->size();
- *  
- * @see http://gravatar.com/site/implement/images/
- * @see http://ru.gravatar.com/site/implement/profiles/
+ * @see http://ru.gravatar.com/site/implement/
 */
 abstract class Model_Gravatar extends Model
 {
-	// Image URL pattern
-	const URL = 'http%s://www.gravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s';
-
 	// Do not load any image if none is associated with the email hash
 	const IMAGE_404 = '404';
 	// Mystery-man a simple, cartoon-style silhouetted outline of a person.
-	const IMAGE_MM  = 'mm';
+	const IMAGE_MM = 'mm';
 	// A geometric pattern based on an email hash
-	const IMAGE_IDENTICON  = 'identicon';
+	const IMAGE_IDENTICON = 'identicon';
 	// A generated 'monster' with different colors, faces, etc
-	const IMAGE_MONSTERID  = 'monsterid';
+	const IMAGE_MONSTERID = 'monsterid';
 	// Generated faces with differing features and backgrounds
-	const IMAGE_WAVATAR  = 'wavatar';
+	const IMAGE_WAVATAR = 'wavatar';
 	// Awesome generated, 8-bit arcade-style pixelated faces
-	const IMAGE_RETRO  = 'retro';
+	const IMAGE_RETRO = 'retro';
 	// A transparent PNG image (border added to HTML below for demonstration purposes)
-	const IMAGE_BLANK  = 'blank';
+	const IMAGE_BLANK = 'blank';
 
 	// Suitable for display on all websites with any audience type.
-	const RATING_G  = 'g';
+	const RATING_G = 'g';
 	// May contain rude gestures, provocatively dressed individuals, the lesser swear words, or mild violence.
 	const RATING_PG = 'pg';
 	// May contain such things as harsh profanity, intense violence, nudity, or hard drug use.
-	const RATING_R  = 'r';
+	const RATING_R = 'r';
 	// May contain hardcore sexual imagery or extremely disturbing violence.
-	const RATING_X  = 'x';
+	const RATING_X = 'x';
 
 	// Default config group
 	public static $default = 'default';
@@ -76,7 +79,7 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * 
+	 * Gravatar constructor
 	 */
 	protected function __construct($email = NULL, $group = NULL)
 	{
@@ -100,14 +103,42 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
+	 * Get user profile data
+	 * @see http://gravatar.com/site/implement/profiles/php/
+	 * 
+	 * @access public
+	 * @param  array  $params  Retrieves multiple paths from profile data. 
+	 * @return array
+	 * @uses   Request::factory
+	 * @uses   Arr::extract
+	 */
+	public function profile_data(array $params = NULL)
+	{
+		if ( ! $lang = explode('-', I18n::lang(), -1))
+		{
+			$lang = I18n::lang();
+		}
+		
+		$url = sprintf('http://%s.gravatar.com/%s.php', $lang, $this->_email);
+		
+		if ($data = Request::factory($url)->execute()->body())
+		{
+			$data = unserialize($data);
+			$data = $data['entry'][0];
+			
+			return empty($params) ? $data : Arr::extract($data, $params);
+		}
+	}
+
+	/**
 	 * Create utl
 	 */
 	public function url($secure = FALSE)
 	{
 		$secure = ($secure ? 's' : '');
 		
-		return sprintf(self::URL, $secure, $this->_email, $this->_size, 
-			$this->_default_image, $this->_force_default, $this->_rating);
+		return sprintf('http%s://gravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s', $secure, $this->_email, 
+			$this->_size, $this->_default_image, $this->_force_default, $this->_rating);
 	}
 
 	/**

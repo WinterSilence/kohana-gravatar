@@ -3,19 +3,23 @@ Gravatar - a picture that follows you from site to site,
 appearing when you send a comment or write a blog. `http://gravatar.com/`
 
 ### Usage:
-Create image tag with gravatar:
+Create image tag with Gravatar:
 <pre>
 echo Gravatar::factory('me@site.com', 'cfg_group')->render('img_class_attr', $secure);
-// Short version
+// Short way
 echo Gravatar::factory('user@site.com', 'big');
 // Configurate in code
-$avatar = Gravatar::factory();
-echo $avatar->email('user@site.com')
-			->size(50)
-			->default_image(Gravatar::IMAGE_MM)
-			->force_default(FALSE)
-			->rating(Gravatar::RATING_PG)
-			->render('avatar_class', FALSE);
+$gravatar = Gravatar::factory();
+echo $gravatar->email('user@site.com')
+	->size(50)
+	->default_image(Gravatar::IMAGE_MM)
+	->force_default(FALSE)
+	->rating(Gravatar::RATING_PG)
+	->render('avatar_class', FALSE);
+</pre>
+Get profile data:
+<pre>
+var_export($gravatar->profile_data(array('photos', 'accounts')));
 </pre>
 Get URL:
 <pre>
@@ -26,6 +30,3 @@ Get properties:
 echo $avatar->size();
 echo $avatar->rating();
 </pre>
-
-### TODO:
-- Add profile requests `http://ru.gravatar.com/site/implement/profiles/`
