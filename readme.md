@@ -23,10 +23,10 @@ var_export($gravatar->profile_data(array('photos', 'accounts')));
 </pre>
 Get URL:
 <pre>
-echo $avatar->url($secure);
+echo $gravatar->url($secure);
 </pre>
 Get properties:
 <pre>
-echo $avatar->size();
-echo $avatar->rating();
+echo $gravatar->size();
+echo $gravatar->rating();
 </pre>
