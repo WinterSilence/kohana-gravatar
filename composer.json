@@ -1,5 +1,5 @@
 {
-	"name": "WinterSilence/kohana-gravatar",
+	"name": "wintersilence/kohana-gravatar",
 	"require": {
 		"php": ">=5.3.3",
 		"kohana/core": "v3.3.1"
