@@ -1,5 +1,6 @@
 {
 	"name": "wintersilence/kohana-gravatar",
+	"type": "kohana-module",
 	"description": "A globally recognized avatar aka Gravatar helper class for Kohana framework",
 	"license": "BSD-3-Clause",
 	"keywords": ["kohana", "framework", "gravatar"],
