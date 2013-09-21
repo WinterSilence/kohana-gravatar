@@ -1,5 +1,5 @@
 # Kohana Gravatar
-## A globally recognized avatar aka Gravatar module for Kohana framework.
+A globally recognized avatar aka Gravatar module for Kohana framework.
 
 Gravatar - a picture that follows you from site to site, 
 appearing when you send a comment or write a blog. 

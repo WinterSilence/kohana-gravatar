@@ -6,6 +6,6 @@
 	"keywords": ["kohana", "framework", "gravatar"],
 	"require": {
 		"php": ">=5.3.3",
-		"kohana/core": "v3.2"
+		"kohana/core": "v3.3.1"
 	}
 }
