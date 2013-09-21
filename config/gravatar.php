@@ -7,7 +7,9 @@ return array(
 		'rating'        => Gravatar::RATING_G,
 		'force_default' => FALSE,
 	),
-	/*
+	/* 
+	For example:
+	
 	'small' => array(
 		'size'          => 50,
 		'default_image' => Gravatar::IMAGE_BLANK,

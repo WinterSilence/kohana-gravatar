@@ -1,11 +1,11 @@
 {
 	"name": "wintersilence/kohana-gravatar",
 	"type": "kohana-module",
-	"description": "A globally recognized avatar aka Gravatar helper class for Kohana framework",
+	"description": "A globally recognized avatar aka Gravatar module for Kohana framework",
 	"license": "BSD-3-Clause",
 	"keywords": ["kohana", "framework", "gravatar"],
 	"require": {
 		"php": ">=5.3.3",
-		"kohana/core": "v3.3.1"
+		"kohana/core": "v3.2"
 	}
 }
