@@ -1,17 +1,20 @@
 # Kohana Gravatar
-A globally recognized avatar aka Gravatar module for Kohana framework.
+
+A globally recognized avatar aka Gravatar module for [Kohana framework](http://kohanaframework.org).
 
 Gravatar - a picture that follows you from site to site, 
 appearing when you send a comment or write a blog. 
-For more info see: `http://gravatar.com/`.
+For more info visite [gravatar.com](http://gravatar.com).
 
-### Properties:
+### Properties
+
 - Flexible configuration using the groups
 - Getting the Gravatar URL
 - Getting the image tag
 - Getting the profile data
 
-### Usage examples:
+### Usage examples
+
 Create image tag with Gravatar:
 ~~~
 echo Gravatar::factory('me@site.com', 'cfg_group')->render('img_class_attr', $secure);

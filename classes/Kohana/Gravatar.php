@@ -1,39 +1,16 @@
 <?php defined('SYSPATH') OR die('No direct script access.');
 /**
- * A globally recognized avatar aka Gravatar helper class
+ * A globally recognized avatar aka [Gravatar](http://gravatar.com/site/implement/) helper class.
  *
  * @package   Gravatar
- * @category  Model
+ * @category  Base
  * @author    WinterSilence <info@handy-soft.ru>
- * @copyright (c) 2013 handy-soft.ru
+ * @copyright (c) 2013-2014 handy-soft.ru
  * @license   MIT License
  * @link      https://github.com/WinterSilence/kohana-gravatar
- * @see       http://gravatar.com/site/implement/
- *
- * Usage examples:
- *    // Get gravatar image tag (short way)
- *    echo Gravatar::factory('test@site.com', 'big')->render();
- * 
- *    // Get gravatar image tag (full way)
- *    $gravatar = Gravatar::factory();
- *    echo $gravatar->email('test@site.com')
- *       ->size(80)
- *       ->default_image(Gravatar::IMAGE_MM)
- *       ->force_default(FALSE)
- *       ->rating(Gravatar::RATING_PG)
- *       ->render('css_class_name', FALSE);
- * 
- *    // Get profile data
- *    var_export($gravatar->profile_data(array('photos', 'accounts')));
- * 
- *    // Get gravatar URL
- *    echo $gravatar->url(TRUE);
- * 
- *    // Get size property value
- *    echo $gravatar->size();
 */
-abstract class Model_Gravatar extends Model
-{
+abstract class Kohana_Gravatar {
+
 	// Do not load any image if none is associated with the email hash
 	const IMAGE_404 = '404';
 	// Mystery-man a simple, cartoon-style silhouetted outline of a person.
@@ -58,43 +35,35 @@ abstract class Model_Gravatar extends Model
 	// Hardcore sexual imagery or extremely disturbing violence.
 	const RATING_X = 'x';
 
-
 	/**
-	 * Default config group
-	 * @var string
+	 * @var string Default config group
 	 */
 	public static $default = 'default';
 
 	/**
-	 * Email address
-	 * @var string
+	 * @var string Email address
 	 */
 	protected $_email;
 
 	/**
-	 * Image size
-	 * @var integer
+	 * @var integer Image size
 	 */
 	protected $_size = 80;
 
 	/**
-	 * Used if not image is undefined
-	 * @var string
+	 * @var string Used if not image is undefined
 	 */
 	protected $_default_image = self::IMAGE_404; 
 
 	/**
-	 * Not use user image
-	 * @var bool
+	 * @var bool Not use user image
 	 */
 	protected $_force_default = FALSE;
 
 	/**
-	 * User image rating
-	 * @var string
+	 * @var string User image rating
 	 */
 	protected $_rating = self::RATING_G;
-
 
 	/**
 	 * Gravatar factory
@@ -125,13 +94,24 @@ abstract class Model_Gravatar extends Model
 		{
 			$this->email($email);
 		}
+
 		// If group is undefined uses default property
 		if ( ! $group)
 		{
 			$group = self::$default;
 		}
+
 		// Loading configuration group
 		$config = Kohana::$config->load('gravatar')->get($group);
+
+		if (empty($config))
+		{
+			throw new Kohana_Exception(
+				'Gravatar: config group `gravatar.:group` not exists', 
+				array(':group' => $group)
+			);
+		}
+
 		// Sets properties
 		foreach ($config as $key => $value)
 		{
@@ -140,13 +120,12 @@ abstract class Model_Gravatar extends Model
 	}
 
 	/**
-	 * Get user profile data from gravatar.com
-	 * @see http://gravatar.com/site/implement/profiles/php/
+	 * Get [user profile](http://gravatar.com/site/implement/profiles/php/) data from gravatar.com.
 	 * 
 	 * @access public
 	 * @param  array  $params  Retrieves multiple paths from profile data
 	 * @return array
-	 * @throw  Request_Exception
+	 * @throw  Kohana_Exception
 	 * @uses   I18n::lang
 	 * @uses   Request::factory
 	 * @uses   Arr::extract
@@ -154,21 +133,26 @@ abstract class Model_Gravatar extends Model
 	public function profile_data(array $params = NULL)
 	{
 		// Get system language
-		if ( ! $lang = explode('-', I18n::lang(), -1))
+		$lang = explode('-', I18n::lang(), -1);
+		if (empty($lang))
 		{
 			$lang = I18n::lang();
 		}
-		
+
 		$url = sprintf('http://%s.gravatar.com/%s.php', $lang, $this->_email);
-		
+
 		// Makes request to gravatar.com and returns response
-		if ( ! $data = Request::factory($url)->execute()->body())
+		$data = Request::factory($url)->execute()->body();
+
+		if (empty($data))
 		{
-			throw new Request_Exception('Gravatar: profile data request failed');
+			throw new Kohana_Exception('Gravatar: profile data request failed');
 		}
+
 		// Convert responce data
 		$data = unserialize($data);
 		$data = $data['entry'][0];
+
 		// Return all ​​or selected data
 		return empty($params) ? $data : Arr::extract($data, $params);
 	}
@@ -177,14 +161,20 @@ abstract class Model_Gravatar extends Model
 	 * Create URL on gravatar image
 	 * 
 	 * @access public
-	 * @param  bool  $secure  Is secure(ssl/https) request?
+	 * @param  bool  $secure  Is secure (ssl/https) request?
 	 * @result string
 	 */ 
 	public function url($secure = FALSE)
 	{
-		$secure = ($secure ? 's' : '');
-		return sprintf('http%s://gravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s', $secure, $this->_email, 
-			$this->_size, $this->_default_image, $this->_force_default, $this->_rating);
+		return sprintf(
+			'http%s://gravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s', 
+			$secure ? 's' : '', 
+			$this->_email, 
+			$this->_size, 
+			$this->_default_image, 
+			$this->_force_default, 
+			$this->_rating
+		);
 	}
 
 	/**
@@ -192,7 +182,7 @@ abstract class Model_Gravatar extends Model
 	 * 
 	 * @access public
 	 * @param  string  $class   CSS class
-	 * @param  bool    $secure  Is secure(ssl/https) request?
+	 * @param  bool    $secure  Is secure (ssl/https) request?
 	 * @result string
 	 * @throw  Kohana_Exception
 	 * @uses   HTML::image
@@ -203,12 +193,14 @@ abstract class Model_Gravatar extends Model
 		{
 			throw new Kohana_Exception('Gravatar: rendering failed, email is not specified');
 		}
+
 		$attributes = array(
 			'alt'    => __('Gravatar'), 
 			'width'  => $this->_size, 
 			'height' => $this->_size, 
-			'class'  => is_null($class) ? 'gravatar' : $class,
+			'class'  => $class === NULL ? 'gravatar' : $class,
 		);
+
 		return HTML::image($this->url($secure), $attributes);
 	}
 
@@ -224,16 +216,19 @@ abstract class Model_Gravatar extends Model
 	 */ 
 	public function email($value = NULL)
 	{
-		if ($value)
+		if ($value === NULL)
 		{
-			if ( ! Valid::email($value) OR ! Valid::email_domain($value))
-			{
-				throw new Kohana_Exception('Gravatar: invalid email value');
-			}
-			$this->_email = md5(strtolower(trim($value)));
-			return $this;
+			return $this->_email;
 		}
-		return $this->_email;
+
+		if ( ! Valid::email($value) OR ! Valid::email_domain($value))
+		{
+			throw new Kohana_Exception('Gravatar: invalid email value');
+		}
+
+		$this->_email = md5(strtolower(trim($value)));
+
+		return $this;
 	}
 
 	/**
@@ -246,16 +241,19 @@ abstract class Model_Gravatar extends Model
 	 */ 
 	public function size($value = NULL)
 	{
-		if ($value)
+		if ($value === NULL)
 		{
-			if ($value < 30 OR $value > 1000)
-			{
-				throw new Kohana_Exception('Gravatar: image size must be more 30 and less 1000');
-			}
-			$this->_size = (int) $value;
-			return $this;
+			return $this->_size;
 		}
-		return $this->_size;
+
+		if ($value < 30 OR $value > 1000)
+		{
+			throw new Kohana_Exception('Gravatar: image size must be more 30 and less 1000');
+		}
+
+		$this->_size = (int) $value;
+
+		return $this;
 	}
 
 	/**
@@ -269,20 +267,29 @@ abstract class Model_Gravatar extends Model
 	 */ 
 	public function default_image($value = NULL)
 	{
-		if ($value)
+		if ($value === NULL)
 		{
-			$default_images = array(
-				self::IMAGE_404, self::IMAGE_MM, self::IMAGE_IDENTICON, self::IMAGE_MONSTERID,
-				self::IMAGE_WAVATAR, self::IMAGE_RETRO, self::IMAGE_BLANK
-			);
-			if ( ! in_array($value, $default_images) AND ! Valid::url($url))
-			{
-				throw new Kohana_Exception('Gravatar: invalid default image value');
-			}
-			$this->_default_image = urlencode($value);
-			return $this;
+			return $this->_default_image;
 		}
-		return $this->_default_image;
+
+		$default_images = array(
+			self::IMAGE_404, 
+			self::IMAGE_MM, 
+			self::IMAGE_IDENTICON, 
+			self::IMAGE_MONSTERID,
+			self::IMAGE_WAVATAR, 
+			self::IMAGE_RETRO, 
+			self::IMAGE_BLANK
+		);
+
+		if ( ! in_array($value, $default_images) AND ! Valid::url($url))
+		{
+			throw new Kohana_Exception('Gravatar: invalid default image value');
+		}
+
+		$this->_default_image = urlencode($value);
+
+		return $this;
 	}
 
 	/**
@@ -294,12 +301,14 @@ abstract class Model_Gravatar extends Model
 	 */
 	public function force_default($value = NULL)
 	{
-		if ( ! is_null($value))
+		if ($value === NULL )
 		{
-			$this->_force_default = $value ? '&f=y' : '';
-			return $this;
+			return $this->_force_default;
 		}
-		return $this->_force_default;
+
+		$this->_force_default = $value ? '&f=y' : '';
+
+		return $this;
 	}
 
 	/**
@@ -312,17 +321,21 @@ abstract class Model_Gravatar extends Model
 	 */
 	public function rating($value = NULL)
 	{
-		if ($value)
+		if ($value === NULL)
 		{
-			$ratings = array(self::RATING_G, self::RATING_PG, self::RATING_R, self::RATING_X);
-			if ( ! in_array($value, $ratings))
-			{
-				throw new Kohana_Exception('Gravatar: invalid rating value');
-			}
-			$this->_rating = $value;
-			return $this;
+			return $this->_rating;
 		}
-		return $this->_rating;
+
+		$ratings = array(self::RATING_G, self::RATING_PG, self::RATING_R, self::RATING_X);
+
+		if ( ! in_array($value, $ratings))
+		{
+			throw new Kohana_Exception('Gravatar: invalid rating value');
+		}
+
+		$this->_rating = $value;
+
+		return $this;
 	}
 
 	/**
@@ -360,5 +373,4 @@ abstract class Model_Gravatar extends Model
 	{
 		$this->{$name}($value);
 	}
-
-} // End Gravatar
+}

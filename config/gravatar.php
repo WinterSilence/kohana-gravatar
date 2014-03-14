@@ -9,7 +9,6 @@ return array(
 	),
 	/* 
 	For example:
-	
 	'small' => array(
 		'size'          => 50,
 		'default_image' => Gravatar::IMAGE_BLANK,
