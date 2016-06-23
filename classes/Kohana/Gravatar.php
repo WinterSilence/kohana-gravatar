@@ -167,11 +167,12 @@ abstract class Kohana_Gravatar {
 	public function url($secure = FALSE)
 	{
 		return sprintf(
-			'http%s://gravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s', 
-			$secure ? 's' : '', 
-			$this->_email, 
+			'http%s://%sgravatar.com/avatar/%s?s=%d&d=%s&%s&r=%s',
+			$secure ? 's' : '',
+			$secure ? 's.' : '',
+			$this->_email,
 			$this->_size, 
-			$this->_default_image, 
+			$this->_default_image,
 			$this->_force_default, 
 			$this->_rating
 		);
@@ -303,7 +304,7 @@ abstract class Kohana_Gravatar {
 	{
 		if ($value === NULL )
 		{
-			return $this->_force_default;
+			$value = $this->_force_default;
 		}
 
 		$this->_force_default = $value ? '&f=y' : '';
