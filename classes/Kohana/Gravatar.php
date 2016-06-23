@@ -282,7 +282,7 @@ abstract class Kohana_Gravatar {
 			self::IMAGE_BLANK
 		);
 
-		if ( ! in_array($value, $default_images) AND ! Valid::url($url))
+		if ( ! in_array($value, $default_images) AND ! Valid::url($value))
 		{
 			throw new Kohana_Exception('Gravatar: invalid default image value');
 		}
