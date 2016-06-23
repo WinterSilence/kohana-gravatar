@@ -303,10 +303,10 @@ abstract class Kohana_Gravatar {
 	{
 		if ($value === NULL )
 		{
-			return $this->_force_default;
+			$value = $this->_force_default;
 		}
 
-		$this->_force_default = $value ? '&f=y' : '';
+		$this->_force_default = $value ? '&f=y' : '&f=';
 
 		return $this;
 	}
